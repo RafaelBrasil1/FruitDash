@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Dash</title>
+
+    <style>
+        @font-face {
+            font-family: 'ARCADE';
+            src: url("./assets/ARCADECLASSIC.ttf");
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <canvas id="canvas" width="1280" height="768">
+
+        <h1>Não funciona</h1>
+        <h1>AKAKAKKAKAKA</h1>
+
+    </canvas>
+</body>
+<script>
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+    canvas.width = 1280;
+    canvas.height = 768;
+    let anima;
+    /// Functions
+
+    // Mouse Colide Function
+    canvas.onmousemove = function (e) {
+        mouse.x = e.clientX
+        mouse.y = e.clientY
+    }
+
+    let mouse = {
+        x: undefined,
+        y: undefined
+    }
+
+    let isInsideButton = (rect = { x: 0, y: 0, width: 0, height: 0 }) => {
+        return mouse.x > rect.x && mouse.x < rect.x + rect.width && mouse.y < rect.y + rect.height && mouse.y > rect.y
+    }
+
+
+
+
+    //random number function
+    function RandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    //Draw Line function
+    function line(x, y, fx, fy) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(fx, fy);
+
+        ctx.stroke();
+    }
+
+    ///Classes
+
+    class Button {
+        constructor(X, Y, W, H, btnColor, btnColor2, text, txtSz, strkSz, txtadjust = { x: 0, y: 0 }) {
+            this.x = X;
+            this.y = Y;
+            this.width = W;
+            this.height = H;
+            this.color1 = btnColor;
+            this.color2 = btnColor2;
+            this.colorUsed = btnColor;
+            this.text = text;
+            this.txtSize = String(txtSz);
+            this.strokeSize = strkSz;
+            this.Vel = 3.5;
+            this.Push = 0.2;
+            this.adjust = txtadjust;
+            this.mouseOn = false;
+            this.triggered = false;
+        }
+
+        desenha() {
+
+            ctx.fillStyle = 'black';
+            ctx.fillRect(this.x - this.strokeSize, this.y - this.strokeSize, this.width + this.strokeSize * 2, this.height + this.strokeSize * 2);
+
+            ctx.fillStyle = this.colorUsed;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+
+            ctx.fillStyle = 'black';
+            ctx.textAlign = 'center';
+            ctx.font = this.txtSize + "px ARCADE";
+            ctx.fillText(this.text, (this.x + this.width / this.adjust.x), this.y + this.height / this.adjust.y);
+
+            if (isInsideButton({ x: this.x, y: this.y, width: this.width, height: this.height }) == true) {
+                this.colorUsed = this.color2;
+                this.mouseOn = true;
+
+            } else {
+                this.colorUsed = this.color1;
+                this.mouseOn = false;
+            }
+        }
+    }
+
+
+    class Mode {
+        constructor(X, Y, W, H, whichMode) {
+            this.x = X;
+            this.y = Y;
+            this.width = W;
+            this.height = H;
+            this.which = whichMode;
+            this.onFocus = false;
+
+        }
+
+        desenha() {
+
+            ctx.fillStyle = 'black';
+            ctx.fillRect(this.x - 5, this.y - 5, this.width + 10, this.height + 10);
+
+            ctx.fillStyle = 'rgba(200,200,200,1)';
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+
+
+            //Focus
+
+            if (this.onFocus == true) {
+                if (this.y > 300) {
+                    this.y -= 5;
+                }
+
+            } else {
+
+                if (this.y < 350) {
+                    this.y += 5;
+                }
+            }
+
+
+
+
+            //which drawing
+
+            if (this.which == 0) {
+
+
+                ctx.fillStyle = 'green';
+                ctx.fillRect(this.x + 170, this.y + 90, 70, 70);
+
+
+                ctx.fillStyle = 'rgba(255,100,100,0.5)';
+                ctx.fillRect(this.x + 10, this.y + 90, 70, 70);
+
+                ctx.fillStyle = 'rgba(255,100,100,0.6)';
+                ctx.fillRect(this.x + 30, this.y + 90, 70, 70);
+
+                ctx.fillStyle = 'rgba(255,50,50,0.7)';
+                ctx.fillRect(this.x + 50, this.y + 90, 70, 70);
+
+
+                ctx.fillStyle = 'red';
+                ctx.fillRect(this.x + 70, this.y + 90, 70, 70);
+
+
+
+            }
+
+
+            if (this.which == 1) {
+
+                ctx.fillStyle = 'rgb(51, 29, 7)';
+                ctx.fillRect(this.x + this.width / 4 - 5, this.y + this.height / 4 - 5, this.width / 2 + 10, this.height / 2 + 10);
+
+                ctx.fillStyle = 'rgb(110, 62, 14)';
+                ctx.fillRect(this.x + this.width / 4, this.y + this.height / 4, this.width / 2, this.height / 2)
+
+                line(this.x + this.width / 4, this.y + this.height / 4, this.x + (this.width / 4) * 3, this.y + (this.height / 4) * 3);
+                line(this.x + (this.width / 4) * 3, this.y + (this.height / 4), this.x + (this.width / 4), this.y + (this.height / 4) * 3);
+
+
+            }
+
+            if (this.which == 2) {
+
+                ctx.beginPath();
+                ctx.arc(this.x + 100, this.y + 150, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = 'green';
+                ctx.fill();
+
+                ctx.arc(this.x + 100, this.y + 150, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+
+
+
+                ctx.beginPath();
+                ctx.arc(this.x + 160, this.y + 150, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = 'blue';
+                ctx.fill();
+
+                ctx.arc(this.x + 160, this.y + 150, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+
+
+
+                ctx.beginPath();
+                ctx.arc(this.x + 130, this.y + 100, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = 'red';
+                ctx.fill();
+
+                ctx.arc(this.x + 130, this.y + 100, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+
+
+
+            }
+
+            if (this.which == 3) {
+
+                ctx.beginPath();
+                ctx.arc(this.x + 160, this.y + 150, 25, 0, 2 * Math.PI);
+                ctx.fillStyle = 'green';
+                ctx.fill();
+
+                ctx.arc(this.x + 160, this.y + 150, 25, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+
+
+
+                ctx.beginPath();
+                ctx.arc(this.x + 200, this.y + 150, 25, 0, 2 * Math.PI);
+                ctx.fillStyle = 'blue';
+                ctx.fill();
+
+                ctx.arc(this.x + 200, this.y + 150, 25, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+
+
+
+                ctx.beginPath();
+                ctx.arc(this.x + 180, this.y + 110, 25, 0, 2 * Math.PI);
+                ctx.fillStyle = 'red';
+                ctx.fill();
+
+                ctx.arc(this.x + 180, this.y + 110, 25, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+
+
+
+                ctx.fillStyle = 'rgb(51, 29, 7)';
+                ctx.fillRect(this.x + 50 - 5, this.y + 110 - 5, 40 + 10, 40 + 10);
+
+                ctx.fillStyle = 'rgb(110, 62, 14)';
+                ctx.fillRect(this.x + 50, this.y + 110, 40, 40);
+
+                line(this.x + 50, this.y + 110, this.x + 90, this.y + 150);
+                line(this.x + 90, this.y + 110, this.x + 50, this.y + 150);
+
+
+            }
+
+
+
+
+        }
+
+
+    }
+
+
+
+
+
+
+    ///Screen Vars
+
+    let playClicked = false;
+    let gamemdClicked = false;
+    let creditsClicked = false;
+
+
+    let whichScreen = 0;
+    let TitleY = 230;
+    let TitleVelY = 4;
+    let logoX = 520;
+    let WhichFocus = 0
+
+    let gmText = 'Obstacle';
+
+
+    let gmNormal = new Mode(50, 350, 250, 250, 0);
+    let gmObstacle = new Mode(350, 350, 250, 250, 1);
+    let gmPower = new Mode(650, 350, 250, 250, 2);
+    let gmAll = new Mode(950, 350, 250, 250, 3);
+
+    let FocusFront = new Button(850, 630, 70, 70, 'rgb(220,220,220)', 'rgb(200,200,200)', '→', 50, 3, { x: 1.9, y: 1.4 });
+    let FocusBack = new Button(400, 630, 70, 70, 'rgb(220,220,220)', 'rgb(200,200,200)', '←', 50, 3, { x: 1.9, y: 1.4 });
+
+
+    let playBtn = new Button(350, 300, 500, 100, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Play!', 100, 5, { x: 1.85, y: 1.2 });
+    let gmamdBtn = new Button(350, 450, 500, 100, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Gamemodes', 80, 5, { x: 2, y: 1.35 });
+    let creditsBtn = new Button(350, 600, 500, 100, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Credits', 80, 5, { x: 2, y: 1.35 });
+
+    let creditsClose = new Button(1180, 20, 70, 70, 'rgba(255, 0, 0,1)', 'rgba(150, 0, 0,1)', 'X', 90, 0, { x: 1.9, y: 1.1 });
+    let gamemodeClose = new Button(50, 50, 155, 70, 'rgba(255, 0, 0,1)', 'rgba(150, 0, 0,1)', 'Back', 65, 0, { x: 1.95, y: 1.3 });
+
+    let diff1 = new Button(400, 170, 200, 60, 'rgba(200,200,200,1)', 'rgba(100,100,100,1)', 'Normal', 50, 5, { x: 1.9, y: 1.3 });
+    let diff2 = new Button(700, 170, 200, 60, 'rgba(200,200,200,1)', 'rgba(100,100,100,1)', 'Hard', 50, 5, { x: 1.9, y: 1.3 });
+    let diff3 = new Button(1000, 170, 200, 60, 'rgba(200,200,200,1)', 'rgba(100,100,100,1)', 'Extreme', 50, 5, { x: 2, y: 1.3 });
+
+
+    diff1.triggered = true;
+
+
+
+    ///Game Vars
+
+    obstaclesOn = false;
+    powersOn = false;
+
+    difficulty = 0;
+
+
+
+
+    function draw() {
+        if (whichScreen == 0) {
+            //background
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(177,177,177,1)'
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+
+
+            //Game Title
+            ctx.textAlign = 'left';
+            ctx.fillStyle = 'black';
+            ctx.font = "100px ARCADE";
+            ctx.fillText("Fruit Dash", 350, TitleY);
+
+
+
+            //Logo
+
+            if (logoX < 670) {
+                ctx.fillStyle = 'green';
+                ctx.fillRect(670, 30, 100, 100);
+            }
+
+            ctx.fillStyle = 'rgba(255,100,100,0.5)';
+            ctx.fillRect(logoX - 90, 30, 100, 100);
+
+            ctx.fillStyle = 'rgba(255,100,100,0.6)';
+            ctx.fillRect(logoX - 60, 30, 100, 100);
+
+            ctx.fillStyle = 'rgba(255,50,50,0.7)';
+            ctx.fillRect(logoX - 30, 30, 100, 100);
+
+
+            ctx.fillStyle = 'red';
+            ctx.fillRect(logoX, 30, 100, 100);
+
+
+
+
+
+
+
+            // //Main Buttons
+
+            playBtn.desenha();
+
+            gmamdBtn.desenha();
+
+            creditsBtn.desenha();
+
+
+
+            //Gamemode Screen
+
+            if (gamemdClicked == true) {
+
+                ctx.fillStyle = 'rgba(160,160,160,1)';
+                ctx.fillRect(25, 20, 1225, 725);
+
+                ctx.fillStyle = 'black';
+                ctx.font = '90px ARCADE';
+                ctx.fillText("Gamemode", 625, 100);
+
+                ctx.font = '50px ARCADE';
+                ctx.fillText("Difficulty:", 200, 215);
+
+
+                ctx.font = '50px ARCADE';
+                ctx.fillText(gmText, 665, 690);
+
+
+
+                diff1.desenha();
+
+                if (diff1.triggered == true) {
+
+                    diff1.colorUsed = diff1.color2;
+                } else {
+                    diff1.colorUsed = diff1.color1;
+                }
+
+
+
+                diff2.desenha();
+
+
+                if (diff2.triggered == true) {
+
+                    diff2.colorUsed = diff2.color2;
+                } else {
+                    diff2.colorUsed = diff2.color1;
+                }
+
+
+                diff3.desenha();
+
+                if (diff3.triggered == true) {
+
+                    diff3.colorUsed = diff3.color2;
+                } else {
+                    diff3.colorUsed = diff3.color1;
+                }
+
+
+
+                if (WhichFocus == 0) {
+                    gmNormal.onFocus = true;
+
+                    gmObstacle.onFocus = false;
+                    gmPower.onFocus = false;
+                    gmAll.onFocus = false;
+
+                    obstaclesOn = false;
+                    powersOn = false;
+
+                    gmText = 'Normal'
+
+                }
+
+                if (WhichFocus == 1) {
+                    gmObstacle.onFocus = true;
+
+                    gmNormal.onFocus = false;
+                    gmPower.onFocus = false;
+                    gmAll.onFocus = false;
+
+
+                    obstaclesOn = true;
+                    powersOn = false;
+
+                    gmText = 'Obstacle';
+                }
+
+                if (WhichFocus == 2) {
+                    gmPower.onFocus = true;
+
+                    gmNormal.onFocus = false;
+                    gmObstacle.onFocus = false;
+                    gmAll.onFocus = false;
+
+                    obstaclesOn = false;
+                    powersOn = true;
+
+                    gmText = 'Powers';
+                }
+
+                if (WhichFocus == 3) {
+                    gmAll.onFocus = true;
+
+
+                    gmNormal.onFocus = false;
+                    gmObstacle.onFocus = false;
+                    gmPower.onFocus = false;
+
+                    obstaclesOn = true;
+                    powersOn = true;
+
+                    gmText = 'All'
+                }
+
+
+
+                gmNormal.desenha();
+                gmObstacle.desenha();
+                gmPower.desenha();
+                gmAll.desenha();
+
+                FocusFront.desenha();
+                FocusBack.desenha();
+
+
+
+
+                gamemodeClose.desenha();
+
+            }
+
+
+            //Credits Screen
+
+            if (creditsClicked == true) {
+
+                ctx.fillStyle = 'rgba(140,140,140,0.95)';
+                ctx.fillRect(25, 20, 1225, 725);
+
+                ctx.fillStyle = 'black';
+                ctx.font = '90px ARCADE';
+                ctx.fillText("Credits", 625, 100);
+
+                ctx.font = '50px ARCADE';
+                ctx.fillText("Game Creator:", 625, 200);
+                ctx.fillText("Rafael B. Ulbrich", 625, 300);
+
+                ctx.fillText("Game inspiration:", 625, 500);
+                ctx.fillText("Snake Game", 625, 600);
+
+
+                creditsClose.desenha();
+
+
+            }
+
+            //Played
+
+            if (playClicked == true) {
+                logoX += 7;
+
+
+                playBtn.y -= playBtn.Vel;
+                playBtn.Vel -= playBtn.Push;
+
+                if (playBtn.Vel < -3) {
+
+                    gmamdBtn.y -= gmamdBtn.Vel;
+                    gmamdBtn.Vel -= gmamdBtn.Push;
+
+                    TitleY += TitleVelY
+                    TitleVelY -= 0.2
+
+
+
+                }
+
+                if (gmamdBtn.Vel < -3) {
+
+                    creditsBtn.y -= creditsBtn.Vel;
+                    creditsBtn.Vel -= creditsBtn.Push;
+
+                }
+
+                if (creditsBtn.Vel <= -22) {
+                    whichScreen = 1;
+                }
+
+            }
+
+
+
+        }
+
+        /// Game
+        if (whichScreen == 1) {
+            //background
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(177,177,177,1)'
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        }
+
+
+
+        anima = requestAnimationFrame(draw);
+    }
+
+    //Events
+
+    document.addEventListener("click", function (evento) {
+
+        if (playBtn.mouseOn == true && creditsClicked == false && gamemdClicked == false) {
+            playClicked = true;
+        }
+
+        if (gmamdBtn.mouseOn == true && creditsClicked == false) {
+            gamemdClicked = true;
+        }
+
+        if (creditsBtn.mouseOn == true && gamemdClicked == false) {
+            creditsClicked = true;
+        }
+
+        if (creditsClose.mouseOn == true && gamemdClicked == false) {
+            creditsClicked = false;
+            creditsClose.mouseOn = false;
+        }
+
+        if (gamemodeClose.mouseOn == true && creditsClicked == false) {
+            gamemdClicked = false;
+            gamemodeClose.mouseOn = false;
+        }
+
+
+        if (diff1.mouseOn == true && gamemdClicked == true) {
+            diff1.triggered = true;
+
+            diff2.triggered = false;
+            diff3.triggered = false;
+
+            difficulty = 0;
+
+        }
+
+        if (diff2.mouseOn == true && gamemdClicked == true) {
+            diff2.triggered = true;
+
+            diff1.triggered = false;
+            diff3.triggered = false;
+
+            difficulty = 1;
+
+        }
+
+        if (diff3.mouseOn == true && gamemdClicked == true) {
+            diff3.triggered = true;
+
+            diff2.triggered = false;
+            diff1.triggered = false;
+
+            difficulty = 2;
+
+        }
+
+        if (FocusFront.mouseOn == true && gamemdClicked == true) {
+            if (WhichFocus < 3) {
+                WhichFocus += 1
+            }
+        }
+
+        if (FocusBack.mouseOn == true && gamemdClicked == true) {
+            if (WhichFocus > 0) {
+                WhichFocus -= 1
+            }
+        }
+
+
+    })
+
+
+    draw()
+
+
+</script>
+
+</html>
