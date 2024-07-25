@@ -67,6 +67,19 @@
         ctx.stroke();
     }
 
+
+    //Wait Function
+    let waiting = 0;
+    function wait(number) {
+        if (waiting < number) {
+            waiting += 1;
+        } else {
+            waiting = 0;
+            return true;
+        }
+
+    }
+
     ///Classes
 
     class Button {
@@ -312,7 +325,6 @@
     let FocusFront = new Button(850, 630, 70, 70, 'rgb(220,220,220)', 'rgb(200,200,200)', '→', 50, 3, { x: 1.9, y: 1.4 });
     let FocusBack = new Button(400, 630, 70, 70, 'rgb(220,220,220)', 'rgb(200,200,200)', '←', 50, 3, { x: 1.9, y: 1.4 });
 
-
     let playBtn = new Button(350, 300, 500, 100, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Play!', 100, 5, { x: 1.85, y: 1.2 });
     let gmamdBtn = new Button(350, 450, 500, 100, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Gamemodes', 80, 5, { x: 2, y: 1.35 });
     let creditsBtn = new Button(350, 600, 500, 100, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Credits', 80, 5, { x: 2, y: 1.35 });
@@ -325,16 +337,41 @@
     let diff3 = new Button(1000, 170, 200, 60, 'rgba(200,200,200,1)', 'rgba(100,100,100,1)', 'Extreme', 50, 5, { x: 2, y: 1.3 });
 
 
+    let againbtn = new Button(300, 600, 250, 75, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Again!', 60, 0, { x: 1.835, y: 1.3 });
+    let menubtn = new Button(650, 600, 250, 75, 'rgba(200,200,200,1)', 'rgba(155,155,155,1)', 'Menu', 60, 0, { x: 1.95, y: 1.3 });
+
+
     diff1.triggered = true;
 
 
 
     ///Game Vars
 
-    obstaclesOn = false;
-    powersOn = false;
+
+
+    let obstaclesOn = false;
+    let powersOn = false;
+
+    let gameover = false;
+
+
 
     difficulty = 0;
+
+    let ChangeVel = 36;
+
+    let Px = 50;
+    let Py = 50;
+    let PvelX = 36;
+    let PvelY = 0;
+
+    let Pwait = 15;
+
+    let score = 0;
+
+    let Fx = (RandomInt(0, 32) * 36) + 50;
+    let Fy = (RandomInt(0, 18) * 36) + 50;
+
 
 
 
@@ -588,6 +625,145 @@
             ctx.fillStyle = 'rgba(177,177,177,1)'
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+
+            //score
+            ctx.textAlign = 'left';
+            ctx.fillStyle = 'black';
+            ctx.font = "30px ARCADE";
+            ctx.fillText("Score: " + score.toString(), 10, 30);
+
+
+
+            //Fruit
+
+            ctx.beginPath();
+            ctx.fillStyle = 'green'
+            ctx.fillRect(Fx, Fy, 36, 36);
+
+
+            // Fruit Collide
+
+            if (Px == Fx && Py == Fy) {
+                Fx = (RandomInt(0, 32) * 36) + 50;
+                Fy = (RandomInt(0, 18) * 36) + 50;
+
+
+                if (difficulty == 0) {
+                    if (Pwait > 2.5) {
+                        Pwait -= 0.5;
+                    }
+                    if (Pwait <= 2.5) {
+                        Pwait = 2.5;
+                    }
+                    if (score >= 39) {
+                        Pwait = 1.5;
+                    }
+                    if (score >= 49) {
+                        Pwait = 1;
+                    }
+
+                }
+
+                if (difficulty == 1) {
+                    if (Pwait > 1.5) {
+                        Pwait -= 0.7;
+                    }
+
+
+                    if (Pwait <= 1.5) {
+                        Pwait = 1.5;
+                    }
+                    if (score >= 29) {
+                        Pwait = 1;
+                    }
+                }
+
+                if (difficulty == 2) {
+                    if (Pwait > 1) {
+                        Pwait -= 1;
+                    }
+                    if (Pwait <= 1) {
+                        Pwait = 1;
+                    }
+                }
+
+
+                score += 1;
+            }
+
+
+            //Player
+
+            ctx.beginPath();
+            ctx.fillStyle = 'red'
+            ctx.fillRect(Px, Py, 36, 36);
+
+            //Wall Collide
+            if (Px > 1186 + 36 || Px < 50 || Py > 684 + 36 || Py < 50) {
+                gameover = true;
+
+            }
+
+
+
+
+
+            if (wait(Pwait)) {
+                Px += PvelX;
+                Py += PvelY;
+            }
+
+
+
+
+
+
+
+
+
+
+            //lines
+            ctx.beginPath();
+            ctx.rect(50, 50, 1188, 684);
+            ctx.stroke();
+
+            let lineX = 50;
+            let lineY = 86;
+            for (i = 1; i < 19; i++) {
+                line(lineX, lineY, lineX + 1188, lineY);
+                lineY += 36;
+
+            }
+            lineX = 86;
+            lineY = 50;
+
+            for (i = 1; i < 33; i++) {
+                line(lineX, lineY, lineX, lineY + 684);
+                lineX += 36;
+            }
+
+        }
+
+
+        //gameover
+        if (gameover == true) {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+            ctx.fillStyle = 'white';
+            ctx.font = '100px ARCADE';
+            ctx.fillText('Game Over', 400, 250,)
+
+            ctx.font = '70px ARCADE';
+            ctx.fillText('Your Score:    ' + score.toString(), 300, 400,);
+
+            ctx.font = '50px ARCADE';
+            ctx.fillText('Highest Score:    0', 300, 500);
+
+            againbtn.desenha();
+            menubtn.desenha();
+
         }
 
 
@@ -595,7 +771,33 @@
         anima = requestAnimationFrame(draw);
     }
 
-    //Events
+    ///Events
+
+
+    document.addEventListener('keydown', function (evento) {
+        if ((evento.key == "a")) {
+            PvelX = -ChangeVel;
+            PvelY = 0;
+        }
+
+        if ((evento.key == "d")) {
+            PvelX = ChangeVel;
+            PvelY = 0;
+        }
+
+
+        if ((evento.key == "w")) {
+            PvelX = 0;
+            PvelY = -ChangeVel;
+        }
+
+        if ((evento.key == "s")) {
+            PvelX = 0;
+            PvelY = ChangeVel;
+        }
+
+
+    });
 
     document.addEventListener("click", function (evento) {
 
@@ -663,6 +865,26 @@
                 WhichFocus -= 1
             }
         }
+
+        if (againbtn.mouseOn == true && gameover == true) {
+            gameover = false;
+            ChangeVel = 36;
+            Px = 50;
+            Py = 50;
+            PvelX = 36;
+            PvelY = 0;
+
+            Pwait = 15;
+
+            score = 0;
+
+            Fx = (RandomInt(0, 32) * 36) + 50;
+            Fy = (RandomInt(0, 18) * 36) + 50;
+        }
+
+    if (menubtn.mouseOn == true && gameover == true){
+        location.reload();
+    }
 
 
     })
