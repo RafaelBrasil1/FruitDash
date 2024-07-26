@@ -208,7 +208,7 @@
 
                 ctx.beginPath();
                 ctx.arc(this.x + 100, this.y + 150, 50, 0, 2 * Math.PI);
-                ctx.fillStyle = 'green';
+                ctx.fillStyle = 'rgb(94, 255, 94)';
                 ctx.fill();
 
                 ctx.arc(this.x + 100, this.y + 150, 50, 0, 2 * Math.PI);
@@ -219,7 +219,7 @@
 
                 ctx.beginPath();
                 ctx.arc(this.x + 160, this.y + 150, 50, 0, 2 * Math.PI);
-                ctx.fillStyle = 'blue';
+                ctx.fillStyle = 'rgb(94, 185, 255)';
                 ctx.fill();
 
                 ctx.arc(this.x + 160, this.y + 150, 50, 0, 2 * Math.PI);
@@ -230,7 +230,7 @@
 
                 ctx.beginPath();
                 ctx.arc(this.x + 130, this.y + 100, 50, 0, 2 * Math.PI);
-                ctx.fillStyle = 'red';
+                ctx.fillStyle = 'rgb(255, 94, 94)';
                 ctx.fill();
 
                 ctx.arc(this.x + 130, this.y + 100, 50, 0, 2 * Math.PI);
@@ -245,7 +245,7 @@
 
                 ctx.beginPath();
                 ctx.arc(this.x + 160, this.y + 150, 25, 0, 2 * Math.PI);
-                ctx.fillStyle = 'green';
+                ctx.fillStyle = 'rgb(94, 255, 94)   ';
                 ctx.fill();
 
                 ctx.arc(this.x + 160, this.y + 150, 25, 0, 2 * Math.PI);
@@ -256,7 +256,7 @@
 
                 ctx.beginPath();
                 ctx.arc(this.x + 200, this.y + 150, 25, 0, 2 * Math.PI);
-                ctx.fillStyle = 'blue';
+                ctx.fillStyle = 'rgb(94, 185, 255)';
                 ctx.fill();
 
                 ctx.arc(this.x + 200, this.y + 150, 25, 0, 2 * Math.PI);
@@ -267,7 +267,7 @@
 
                 ctx.beginPath();
                 ctx.arc(this.x + 180, this.y + 110, 25, 0, 2 * Math.PI);
-                ctx.fillStyle = 'red';
+                ctx.fillStyle = 'rgb(255, 94, 94)';
                 ctx.fill();
 
                 ctx.arc(this.x + 180, this.y + 110, 25, 0, 2 * Math.PI);
@@ -294,6 +294,174 @@
         }
 
 
+    }
+
+    class Obstacle {
+        constructor() {
+            this.x = (RandomInt(0, 32) * 36) + 50;
+            this.y = (RandomInt(0, 18) * 36) + 50;
+        }
+
+        desenha() {
+            ctx.beginPath();
+            ctx.fillStyle = 'rgb(120, 70, 0)';
+            ctx.fillRect(this.x, this.y, 36, 36);
+
+
+
+            //player collision
+
+            if (this.x == Px && this.y == Py) {
+                if(imune == false){
+                gameover = true;
+                }
+            }
+
+            //fruit collision
+            if (this.x == Fx && this.y == Fy) {
+                Fx = (RandomInt(0, 32) * 36) + 50;
+                Fy = (RandomInt(0, 18) * 36) + 50;
+            }
+
+            //power collision
+            if(this.x == Power.x && this.y == Power.y){
+                this.x = (RandomInt(0, 32) * 36) + 50;
+                this.y = (RandomInt(0, 18) * 36) + 50;
+            }
+
+        }
+
+    }
+
+
+
+
+
+
+
+    class FruitDup {
+        constructor(){
+            this.x = (RandomInt(0, 32) * 36) + 50;
+            this.y = (RandomInt(0, 18) * 36) + 50;
+        }
+        desenha(){
+
+            ctx.beginPath();
+            ctx.fillStyle = 'rgb(94, 255, 94)';
+            ctx.fillRect(this.x, this.y, 36, 36);
+
+
+            if(this.x == Px && this.y == Py){
+                this.x = (RandomInt(0, 32) * 36) + 50;
+                this.y = (RandomInt(0, 18) * 36) + 50;
+
+                if (difficulty == 0) {
+                    if (Pwait > 2.5) {
+                        Pwait -= 0.5;
+                    }
+                    if (Pwait <= 2.5) {
+                        Pwait = 2.5;
+                    }
+                    if (score >= 39) {
+                        Pwait = 1.5;
+                    }
+                    if (score >= 49) {
+                        Pwait = 1;
+                    }
+
+                }
+
+                if (difficulty == 1) {
+                    if (Pwait > 1.5) {
+                        Pwait -= 0.7;
+                    }
+
+
+                    if (Pwait <= 1.5) {
+                        Pwait = 1.5;
+                    }
+                    if (score >= 29) {
+                        Pwait = 1;
+                    }
+                }
+
+                if (difficulty == 2) {
+                    if (Pwait > 1) {
+                        Pwait -= 1;
+                    }
+                    if (Pwait <= 1) {
+                        Pwait = 1;
+                    }
+                }
+
+                
+                score += 1;
+
+            
+            }
+
+            if(this.x == Fx && this.y == Fy){
+                Fx = (RandomInt(0, 32) * 36) + 50;
+                Fy = (RandomInt(0, 18) * 36) + 50;
+            };
+
+
+        }
+
+        
+    }
+
+
+
+
+
+
+
+    const Power = {
+        x: (RandomInt(0, 32) * 36) + 50,
+        y: (RandomInt(0, 18) * 36) + 50,
+        type: RandomInt(1,3),
+
+        desenha: function () {
+            if (this.type == 1){
+                ctx.beginPath();
+                ctx.arc(this.x + 18, this.y + 18, 18, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgb(94, 255, 94)';
+                ctx.fill();
+
+                ctx.arc(this.x + 18, this.y + 18, 18, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+            }
+            
+            if (this.type == 2){
+                ctx.beginPath();
+                ctx.arc(this.x + 18, this.y + 18, 18, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgb(255, 94, 94)';
+                ctx.fill();
+
+                ctx.arc(this.x + 18, this.y + 18, 18, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+            }
+
+            if (this.type == 3){
+                ctx.beginPath();
+                ctx.arc(this.x + 18, this.y + 18, 18, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgb(94, 185, 255)';
+                ctx.fill();
+
+                ctx.arc(this.x + 18, this.y + 18, 18, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.stroke();
+            }
+        },
+
+        reload: function () {
+            this.x = (RandomInt(0, 32) * 36) + 50;
+            this.y = (RandomInt(0, 18) * 36) + 50;
+            this.type = RandomInt(1,3);
+        }
     }
 
 
@@ -347,16 +515,22 @@
 
     ///Game Vars
 
+    let obstaclesList = [];
+    let obstacleIndex = 0;
 
+    let FruitDupList = [];
+    let fruitDupIndex = 0;
 
     let obstaclesOn = false;
     let powersOn = false;
 
+    let powerOnScreen = false;
+
     let gameover = false;
 
+    let imune = false;
 
-
-    difficulty = 0;
+    let difficulty = 0;
 
     let ChangeVel = 36;
 
@@ -367,6 +541,9 @@
 
     let Pwait = 15;
 
+    let imuneCD = 1200;
+
+    let highestScore = localStorage.highestScore;
     let score = 0;
 
     let Fx = (RandomInt(0, 32) * 36) + 50;
@@ -640,13 +817,13 @@
             ctx.fillStyle = 'green'
             ctx.fillRect(Fx, Fy, 36, 36);
 
-
+            
             // Fruit Collide
 
             if (Px == Fx && Py == Fy) {
                 Fx = (RandomInt(0, 32) * 36) + 50;
                 Fy = (RandomInt(0, 18) * 36) + 50;
-
+                
 
                 if (difficulty == 0) {
                     if (Pwait > 2.5) {
@@ -687,20 +864,129 @@
                     }
                 }
 
+                //Obstacles
+                if (obstaclesOn == true) {
+                    obstaclesList[obstacleIndex] = new Obstacle();
+                    obstacleIndex += 1;
+
+
+                    if (difficulty > 0) {
+                        obstaclesList[obstacleIndex] = new Obstacle();
+                        obstacleIndex += 1;
+                    }
+
+                }
+
+
+                //Power
+                if(powersOn == true){
+                let random = RandomInt(1,3 + difficulty);
+                if(random == 1){
+                    if(powerOnScreen == false){
+                    Power.reload();
+                    }
+                    powerOnScreen = true;
+                }
+            }
 
                 score += 1;
             }
 
+            //obstacles draw
+            for (z = 0; z < obstaclesList.length; z++) {
+                obstaclesList[z].desenha();
+            }
+
+          
+
+            //FruitDup Draw
+            for (z = 0; z < FruitDupList.length; z++) {
+                FruitDupList[z].desenha();
+            }
+
+
+
+            //Power draw
+            if(powerOnScreen == true){
+            Power.desenha();
+
+                
+
+            //Power collide Player
+            if (Power.x == Px && Power.y == Py){
+                powerOnScreen = false;
+
+
+                if(Power.type == 1){
+                    
+                    FruitDupList[fruitDupIndex] = new FruitDup();
+                    fruitDupIndex += 1;
+                    
+                }
+
+                if(Power.type == 2){
+                    imune = true;
+                    imuneCD = 1200;
+                }
+
+                if(Power.type == 3){
+                    if(Pwait <= 10){
+                    Pwait += 5;
+                    }else{
+                        Pwait = 15;
+                    }
+                }
+            }
+
+
+            }
+
+
+            //imune remove
+            if(imune == true){
+                
+                if(imuneCD <= 0){
+                    imune = false;
+                    imuneCD = 1200;
+                }else{
+                    imuneCD -= 1;
+                }
+            }
 
             //Player
 
             ctx.beginPath();
-            ctx.fillStyle = 'red'
+  
+            ctx.fillStyle = 'red';
             ctx.fillRect(Px, Py, 36, 36);
+          
 
             //Wall Collide
             if (Px > 1186 + 36 || Px < 50 || Py > 684 + 36 || Py < 50) {
+                if(imune == false){
                 gameover = true;
+                }else{
+                 
+                if(Px > 1186){
+                    PvelX = -ChangeVel;
+                }
+
+                if(Px < 50){
+                    PvelX = ChangeVel;
+                }
+
+                if(Py > 684){
+                    PvelY = -ChangeVel;
+
+                }
+
+                if(Py < 50){
+                PvelY = ChangeVel;
+
+                }
+
+
+                }
 
             }
 
@@ -742,8 +1028,19 @@
                 lineX += 36;
             }
 
-        }
+            //Imune Draw
+            if(imune == true){
+            ctx.strokeStyle = 'yellow';
+            ctx.strokeRect(Px,Py,36,36);
+            ctx.strokeStyle = 'black'
+            }
 
+
+            // HighestScore Updt
+
+            if(score > localStorage.highestScore){
+                localStorage.highestScore = score;
+            }
 
         //gameover
         if (gameover == true) {
@@ -759,14 +1056,14 @@
             ctx.fillText('Your Score:    ' + score.toString(), 300, 400,);
 
             ctx.font = '50px ARCADE';
-            ctx.fillText('Highest Score:    0', 300, 500);
+            ctx.fillText('Highest Score:    '+ localStorage.highestScore.toString(), 300, 500);
 
             againbtn.desenha();
             menubtn.desenha();
 
         }
 
-
+    }
 
         anima = requestAnimationFrame(draw);
     }
@@ -880,11 +1177,17 @@
 
             Fx = (RandomInt(0, 32) * 36) + 50;
             Fy = (RandomInt(0, 18) * 36) + 50;
+
+            obstaclesList = [];
+            obstacleIndex = 0;
+
+            FruitDupList = [];
+            fruitDupIndex = 0;
         }
 
-    if (menubtn.mouseOn == true && gameover == true){
-        location.reload();
-    }
+        if (menubtn.mouseOn == true && gameover == true) {
+            location.reload();
+        }
 
 
     })
